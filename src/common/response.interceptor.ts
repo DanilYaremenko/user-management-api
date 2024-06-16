@@ -13,7 +13,7 @@ export class ResponseInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((data) => ({
         success: context.switchToHttp().getResponse().statusCode < 400,
-        data,
+        ...data,
       })),
       catchError((error) => {
         const { status, message } = error;
