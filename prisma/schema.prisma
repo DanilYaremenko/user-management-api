@@ -19,7 +19,7 @@ model User {
   name  String
   email String @unique
   phone String @unique
-  photo Bytes
+  photo String
 
   position_id Int
   position    Position @relation(fields: [position_id], references: [id])

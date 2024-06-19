@@ -4,12 +4,13 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.user.deleteMany();
-  await prisma.position.deleteMany();
+  // Uncomment to clear the database
+  // await prisma.user.deleteMany();
+  // await prisma.position.deleteMany();
 
   // Uncomment to reset the sequence of the id column
-  await prisma.$executeRaw`ALTER SEQUENCE "Position_id_seq" RESTART WITH 1`;
-  await prisma.$executeRaw`ALTER SEQUENCE "User_id_seq" RESTART WITH 1`;
+  // await prisma.$executeRaw`ALTER SEQUENCE "Position_id_seq" RESTART WITH 1`;
+  // await prisma.$executeRaw`ALTER SEQUENCE "User_id_seq" RESTART WITH 1`;
 
   const positions = [
     { name: 'Frontend Developer' },
@@ -36,7 +37,7 @@ async function main() {
     name: faker.internet.userName(),
     email: faker.internet.email(),
     phone: getRandomPhone(),
-    photo: Buffer.from(faker.image.avatar()),
+    photo: faker.image.avatar(),
     position_id: Math.floor(Math.random() * positions.length) + 1,
   }));
 
