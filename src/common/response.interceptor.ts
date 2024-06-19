@@ -5,7 +5,7 @@ import {
   CallHandler,
   HttpException,
 } from '@nestjs/common';
-import { catchError, map, Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
@@ -17,12 +17,16 @@ export class ResponseInterceptor implements NestInterceptor {
       })),
       catchError((error) => {
         const { status, message } = error;
-        throw new HttpException(
-          {
-            success: false,
-            error: message || 'Internal server error',
-          },
-          status || 502,
+
+        return throwError(
+          () =>
+            new HttpException(
+              {
+                success: false,
+                error: message || 'Internal server error',
+              },
+              status || 500,
+            ),
         );
       }),
     );
