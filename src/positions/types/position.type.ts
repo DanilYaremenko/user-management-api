@@ -1,4 +1,4 @@
-export class PositionDto {
+export type Position = {
   id: number;
   name: string;
-}
+};
