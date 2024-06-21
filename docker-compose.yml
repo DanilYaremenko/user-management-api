@@ -4,8 +4,6 @@ services:
   user_manager_db:
     image: postgres:13
     restart: always
-    env_file:
-      - .env
     environment:
       - DATABASE_URL=${DATABASE_URL}
     volumes:
@@ -18,8 +16,6 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
-    env_file:
-      - .env
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
