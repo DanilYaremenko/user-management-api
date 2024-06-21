@@ -38,3 +38,9 @@ model Position {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model UsedToken {
+  id     Int      @id @default(autoincrement())
+  token  String   @unique
+  usedAt DateTime @default(now())
+}
