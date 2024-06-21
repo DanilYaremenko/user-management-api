@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   CallHandler,
   HttpException,
+  BadRequestException,
 } from '@nestjs/common';
 import { catchError, map, Observable, throwError } from 'rxjs';
 
@@ -17,6 +18,25 @@ export class ResponseInterceptor implements NestInterceptor {
       })),
       catchError((error) => {
         const { status, message } = error;
+
+        if (error instanceof BadRequestException) {
+          const response = error.getResponse();
+          const errors = Array.isArray(response['message'])
+            ? response['message']
+            : [response['message']];
+
+          return throwError(
+            () =>
+              new HttpException(
+                {
+                  message: errors,
+                  error: 'Bad Request',
+                  statusCode: 400,
+                },
+                400,
+              ),
+          );
+        }
 
         return throwError(
           () =>
