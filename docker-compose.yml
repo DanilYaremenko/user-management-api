@@ -13,5 +13,29 @@ services:
     ports:
       - "5432:5432"
 
+  user_manager_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - BASE_URL=${BASE_URL}
+      - TINYPNG_API_KEY=${TINYPNG_API_KEY}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user_manager_db
+    links:
+      - user_manager_db
+    command: >
+      sh -c "
+      npx prisma migrate deploy &&
+      npm run start
+      "
+
 volumes:
   db_data:
