@@ -5,12 +5,12 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Uncomment to clear the database
-  // await prisma.user.deleteMany();
-  // await prisma.position.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.position.deleteMany();
 
   // Uncomment to reset the sequence of the id column
-  // await prisma.$executeRaw`ALTER SEQUENCE "Position_id_seq" RESTART WITH 1`;
-  // await prisma.$executeRaw`ALTER SEQUENCE "User_id_seq" RESTART WITH 1`;
+  await prisma.$executeRaw`ALTER SEQUENCE "Position_id_seq" RESTART WITH 1`;
+  await prisma.$executeRaw`ALTER SEQUENCE "User_id_seq" RESTART WITH 1`;
 
   const positions = [
     { name: 'Frontend Developer' },
