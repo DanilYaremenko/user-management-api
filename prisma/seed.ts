@@ -30,7 +30,7 @@ async function main() {
   });
 
   const getRandomPhone = () => {
-    return '380' + Math.floor(Math.random() * 900000000 + 100000000);
+    return '+380' + Math.floor(Math.random() * 900000000 + 100000000);
   };
 
   const users = Array.from({ length: 45 }, () => ({

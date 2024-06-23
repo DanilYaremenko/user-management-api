@@ -9,6 +9,14 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.enableCors({
+    origin: 'https://user-management-front.onrender.com',
+    methods: 'GET,POST',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
+
   await app.listen(3000);
 }
 bootstrap();
