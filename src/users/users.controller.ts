@@ -19,6 +19,8 @@ import {
   ImageResolutionValidator,
   MaxFileSizeValidator,
 } from './validators/';
+import { GetUsersResponse, RegisterUserResponse } from './types';
+import { User } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
@@ -39,7 +41,7 @@ export class UsersController {
     photo: Express.Multer.File,
     @Body() dto: RegisterUserDto,
     @Headers('token') token: string,
-  ) {
+  ): Promise<RegisterUserResponse> {
     return this.userService.registerUser(dto, photo, token);
   }
 
@@ -47,7 +49,7 @@ export class UsersController {
   getAllUsers(
     @Query('page', ParseIntPipe) page: number,
     @Query('count', ParseIntPipe) count: number,
-  ) {
+  ): Promise<GetUsersResponse> {
     return this.userService.getAllUsers(page, count);
   }
 
@@ -55,7 +57,7 @@ export class UsersController {
   getUserById(
     @Param('id', ParseIntPipe)
     id: number,
-  ) {
+  ): Promise<User> {
     return this.userService.getUserById(id);
   }
 }

@@ -5,23 +5,29 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterUserDto } from './dto';
-import tinify from 'tinify';
-import { resolve } from 'path';
-import * as fs from 'fs';
 import { TokenService } from '../token/token.service';
+import { v2 as cloudinary } from 'cloudinary';
+import { GetUsersResponse, RegisterUserResponse } from './types';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly tokenService: TokenService,
-  ) {}
+  ) {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+  }
 
   async registerUser(
     dto: RegisterUserDto,
     photo: Express.Multer.File,
     token: string,
-  ) {
+  ): Promise<RegisterUserResponse> {
     const decodedToken = await this.tokenService.verifyToken(token);
 
     const userExists = await this.prisma.user.findFirst({
@@ -36,10 +42,7 @@ export class UsersService {
       );
     }
 
-    const imageName = `photo-${Date.now()}.jpg`;
-    const imageUrl = this.getUrl() + '/uploads/' + imageName;
-
-    await this.cropImageAndSave(photo, imageName);
+    const imageUrl = await this.cropImageAndUpload(photo);
 
     const user = await this.prisma.user.create({
       data: {
@@ -50,10 +53,13 @@ export class UsersService {
 
     await this.tokenService.markTokenAsUsed(token);
 
-    return user;
+    return {
+      user_id: user.id,
+      message: 'New user successfully registered',
+    };
   }
 
-  async getAllUsers(page: number, count: number) {
+  async getAllUsers(page: number, count: number): Promise<GetUsersResponse> {
     const totalUsers = await this.prisma.user.count();
     const totalPages = Math.ceil(totalUsers / count);
 
@@ -88,7 +94,7 @@ export class UsersService {
     };
   }
 
-  async getUserById(id: number) {
+  async getUserById(id: number): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) {
@@ -102,25 +108,27 @@ export class UsersService {
     return process.env.BASE_URL || 'http://localhost:3000';
   }
 
-  private async cropImageAndSave(
+  private async cropImageAndUpload(
     photo: Express.Multer.File,
-    imageName: string,
-  ) {
-    const _tinyApiKey = process.env.TINYPNG_API_KEY;
-    tinify.key = _tinyApiKey;
-
-    const croppedImageBuffer = await tinify
-      .fromBuffer(photo.buffer)
-      .resize({ method: 'cover', width: 70, height: 70 })
-      .toBuffer();
-
-    const dirPath = resolve(__dirname, '../../../uploads');
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
-
-    const imagePath = resolve(dirPath, imageName);
-
-    fs.writeFileSync(imagePath, croppedImageBuffer);
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            folder: 'user_photos',
+            width: 70,
+            height: 70,
+            crop: 'fill',
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result.secure_url);
+            }
+          },
+        )
+        .end(photo.buffer);
+    });
   }
 }
