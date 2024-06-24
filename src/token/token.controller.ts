@@ -7,7 +7,7 @@ export class TokenController {
   constructor(private readonly tokenService: TokenService) {}
 
   @Get()
-  getToken(): Token {
+  getToken(): Promise<Token> {
     return this.tokenService.getToken();
   }
 }

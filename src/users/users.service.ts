@@ -28,7 +28,7 @@ export class UsersService {
     photo: Express.Multer.File,
     token: string,
   ): Promise<RegisterUserResponse> {
-    const decodedToken = await this.tokenService.verifyToken(token);
+    await this.tokenService.verifyToken(token);
 
     const userExists = await this.prisma.user.findFirst({
       where: {
