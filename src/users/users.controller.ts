@@ -42,6 +42,9 @@ export class UsersController {
     @Body() dto: RegisterUserDto,
     @Headers('token') token: string,
   ): Promise<RegisterUserResponse> {
+    console.log('photo', photo);
+    console.log('dto', dto);
+    console.log('token', token);
     return this.userService.registerUser(dto, photo, token);
   }
 
@@ -57,7 +60,7 @@ export class UsersController {
   getUserById(
     @Param('id', ParseIntPipe)
     id: number,
-  ): Promise<User> {
+  ): Promise<{ user: User }> {
     return this.userService.getUserById(id);
   }
 }
