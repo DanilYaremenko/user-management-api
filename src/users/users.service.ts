@@ -118,6 +118,7 @@ export class UsersService {
             width: 70,
             height: 70,
             crop: 'fill',
+            quality: 'auto',
           },
           (error, result) => {
             if (error) {
