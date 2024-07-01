@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  user_manager_db:
+    image: postgres:13
+    restart: always
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  user_manager_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - BASE_URL=${BASE_URL}
+      - TINYPNG_API_KEY=${TINYPNG_API_KEY}
+      - REDIS_URL=${REDIS_URL}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user_manager_db
+    links:
+      - user_manager_db
+    command: >
+      sh -c "
+      npx prisma migrate deploy &&
+      npm run start
+      "
+  redis:
+    image: redis:6
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_URL=${REDIS_URL}
+
+
+volumes:
+  db_data:
