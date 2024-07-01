@@ -29,7 +29,7 @@ export class TokenService {
 
   async verifyToken(token: string): Promise<void> {
     try {
-      const decoded = this.jwtService.verify(token);
+      this.jwtService.verify(token);
       const tokenCached = await this.cacheManager.get(token);
 
       if (!tokenCached) {

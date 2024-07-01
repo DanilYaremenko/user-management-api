@@ -10,7 +10,7 @@ export class FileTypeValidator extends FileValidator<FileTypeValidatorOptions> {
   }
 
   buildErrorMessage(file: Express.Multer.File): string {
-    return `Validation failed (expected type is ${this.validationOptions.fileType})`;
+    return `Validation failed for ${file.originalname} (expected type is ${this.validationOptions.fileType})`;
   }
 
   isValid(file?: Express.Multer.File): boolean {

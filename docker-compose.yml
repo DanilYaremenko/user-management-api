@@ -21,6 +21,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - BASE_URL=${BASE_URL}
       - TINYPNG_API_KEY=${TINYPNG_API_KEY}
+      - REDIS_URL=${REDIS_URL}
     ports:
       - "3000:3000"
     depends_on:
@@ -32,6 +33,14 @@ services:
       npx prisma migrate deploy &&
       npm run start
       "
+  redis:
+    image: redis:6
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_URL=${REDIS_URL}
+
 
 volumes:
   db_data:

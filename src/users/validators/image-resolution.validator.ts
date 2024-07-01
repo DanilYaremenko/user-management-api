@@ -26,6 +26,6 @@ export class ImageResolutionValidator extends FileValidator<ImageResolutionValid
   }
 
   buildErrorMessage(file: Express.Multer.File): string {
-    return `Validation failed (expected resolution is at least ${this.validationOptions.minWidth}x${this.validationOptions.minHeight}px)`;
+    return `Validation failed for ${file.originalname} (expected resolution is at least ${this.validationOptions.minWidth}x${this.validationOptions.minHeight}px)`;
   }
 }

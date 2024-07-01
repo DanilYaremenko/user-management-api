@@ -22,7 +22,7 @@ export class MaxFileSizeValidator extends FileValidator<MaxFileSizeValidatorOpti
     }
 
     const maxSizeMegabytes = this.validationOptions.maxSize / 1024 / 1024;
-    return `Validation failed (expected size is less than ${maxSizeMegabytes} Mb)`;
+    return `Validation failed for ${file.originalname} (expected size is less than ${maxSizeMegabytes} Mb)`;
   }
 
   isValid(file?: Express.Multer.File): boolean {
